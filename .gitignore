@@ -2,7 +2,9 @@ venv/
 __pycache__/
 *.__pycache__.env
 *.env
+# Logs
 logs/
+*.log
 reports/
 .pytest_cache/
 .vscode/
