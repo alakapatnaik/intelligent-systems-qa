@@ -28,3 +28,5 @@ assertpy == 1.1
 
 # Data Generation
 faker == 22.0.0
+
+pytest-json-report
