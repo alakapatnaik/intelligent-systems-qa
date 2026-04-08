@@ -27,6 +27,11 @@ jobs:
       run: playwright install
 
     - name: Run tests
+      env:
+        BASE_URL_UI: ${{ secrets.BASE_URL_UI }}
+        BASE_URL_API: ${{ secrets.BASE_URL_API }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
       run: pytest -v
 
     - name: Log in to Docker Hub
