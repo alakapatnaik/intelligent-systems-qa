@@ -29,3 +29,39 @@ REST API validation, and a scalable architecture designed to
 grow into AI/ML model testing and Big Data pipeline validation.
 
 ### Why this framework?
+
+
+### Test Tiering Overview
+    Tier 1 = highest priority:  Business‑Critical (Runs hourly + on push)
+
+    Tier 2 = mid‑priority:  Supporting (Runs on PRs)
+
+    Tier 3 = low‑risk:  Low‑Risk (Runs daily)
+                ┌──────────────────────────┐
+                │        🟢 TIER 1         │
+                │   Business‑Critical      │
+                │  • Login UI tests        │
+                │  • Create/Get User API   │
+                │                          │
+                │ Runs: Hourly + On Push   │
+                └─────────────▲────────────┘
+                              │
+                              │
+                ┌─────────────┴────────────┐
+                │        🟡 TIER 2         │
+                │     Supporting Tests      │
+                │  • Username/Password UI   │
+                │  • Update/Delete User API │
+                │                           │
+                │ Runs: Pull Requests       │
+                └─────────────▲────────────┘
+                              │
+                              │
+                ┌─────────────┴────────────┐
+                │        🔵 TIER 3         │
+                │   Stable / Low‑Risk       │
+                │  • Remember Me UI         │
+                │  • List Users API         │
+                │                           │
+                │ Runs: Daily Schedule      │
+                └──────────────────────────┘
