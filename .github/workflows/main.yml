@@ -1,38 +1,44 @@
-name: CI - Test, Build, Push to DockerHub
+name: CI - Tiered Test Execution
 
 on:
   push:
     branches: [ "main", "initial-setup" ]
+
   pull_request:
     branches: [ "main" ]
 
+  schedule:
+    - cron: "0 * * * *"      # Tier 1 hourly
+    - cron: "0 0 * * *"      # Tier 3 daily
+
 jobs:
-  build-test-push:
+
+  # -----------------------------
+  # 🟢 TIER 1 — Business Critical
+  # -----------------------------
+  tier1-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v5
+    - uses: actions/setup-python@v5
       with:
         python-version: "3.11"
 
     - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
+      run: pip install -r requirements.txt
 
     - name: Install Playwright browsers
       run: playwright install
 
-    - name: Run tests
+    - name: Run Tier 1 tests
       env:
         BASE_URL_UI: "https://demo.applitools.com/"
         BASE_URL_API: ${{ secrets.BASE_URL_API }}
         USERNAME: ${{ secrets.USERNAME }}
         PASSWORD: ${{ secrets.PASSWORD }}
-      run: pytest -v
+      run: pytest -m tier1 -v
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
@@ -46,3 +52,61 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.DOCKERHUB_USERNAME }}/intelligent-systems-qa:${{ github.sha }}
+
+
+  # -----------------------------
+  # 🟡 TIER 2 — Supporting Tests
+  # -----------------------------
+  tier2-tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Install Playwright browsers
+      run: playwright install
+
+    - name: Run Tier 2 tests
+      env:
+        BASE_URL_UI: "https://demo.applitools.com/"
+        BASE_URL_API: ${{ secrets.BASE_URL_API }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+      run: pytest -m tier2 -v
+
+
+  # -----------------------------
+  # 🔵 TIER 3 — Low-Risk Tests
+  # -----------------------------
+  tier3-tests:
+    if: github.event.schedule == '0 0 * * *'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Install Playwright browsers
+      run: playwright install
+
+    - name: Run Tier 3 tests
+      env:
+        BASE_URL_UI: "https://demo.applitools.com/"
+        BASE_URL_API: ${{ secrets.BASE_URL_API }}
+        USERNAME: ${{ secrets.USERNAME }}
+        PASSWORD: ${{ secrets.PASSWORD }}
+      run: pytest -m tier3 -v
