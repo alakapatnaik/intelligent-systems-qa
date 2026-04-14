@@ -6,6 +6,7 @@ from src.config.settings import USERNAME, PASSWORD
 # -----------------------------
 # 1. Verify Login Page Loads
 # -----------------------------
+@pytest.mark.tier1
 def test_verify_login_page_loaded(ui_page):
     login_page = LoginPage(ui_page)
 
@@ -17,6 +18,7 @@ def test_verify_login_page_loaded(ui_page):
 # -----------------------------
 # 2. Valid Login Test
 # -----------------------------
+@pytest.mark.tier1
 def test_valid_login(ui_page):
     login_page = LoginPage(ui_page)
 
@@ -28,6 +30,7 @@ def test_valid_login(ui_page):
 # -----------------------------
 # 3. Verify Username Field Input
 # -----------------------------
+@pytest.mark.tier2
 def test_enter_username(ui_page):
     login_page = LoginPage(ui_page)
 
@@ -40,6 +43,7 @@ def test_enter_username(ui_page):
 # -----------------------------
 # 4. Verify Password Field Input
 # -----------------------------
+@pytest.mark.tier2
 def test_enter_password(ui_page):
     login_page = LoginPage(ui_page)
 
@@ -52,6 +56,7 @@ def test_enter_password(ui_page):
 # -----------------------------
 # 5. Verify Remember Me Checkbox
 # -----------------------------
+@pytest.mark.tier3
 def test_remember_me_checkbox(ui_page):
     login_page = LoginPage(ui_page)
 
